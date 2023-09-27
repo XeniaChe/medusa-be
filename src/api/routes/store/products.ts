@@ -25,7 +25,8 @@ export const ProductRoute = async (router: Router, options: ConfigModule) => {
 
   router.use('/store/products', prodRouter);
 
-  prodRouter.get(
+  // TODO: remove. No intervantions into original entities/DB schema ath the moment
+  /*   prodRouter.get(
     '/getBySlug',
     wrapHandler(async (req, res) => {
       const prodService: ProductService = req.scope.resolve('productService');
@@ -35,7 +36,7 @@ export const ProductRoute = async (router: Router, options: ConfigModule) => {
 
       res.json(data);
     })
-  );
+  ); */
 
   prodRouter.get(
     '/getByKeyword',

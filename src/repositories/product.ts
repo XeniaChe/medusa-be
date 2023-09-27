@@ -1,10 +1,12 @@
-import { Product } from '../models/product';
+// import { Product } from '../models/product';
+import { Product } from '@medusajs/medusa';
 import { dataSource } from '@medusajs/medusa/dist/loaders/database';
 import { ProductRepository as MedusaProductRepository } from '@medusajs/medusa/dist/repositories/product';
 
 export const ProductRepository = dataSource.getRepository(Product).extend({
   ...MedusaProductRepository,
 
+  // TODO: remove
   async getProductBySlug(value: string): Promise<Product[]> {
     const products = await this.createQueryBuilder('product')
       .leftJoinAndSelect('product.variants', 'productVariants')

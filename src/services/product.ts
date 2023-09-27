@@ -1,5 +1,5 @@
 import { ProductService as MedusaProductService } from '@medusajs/medusa';
-import { Product } from '../models/product';
+// import { Product } from '../models/product';
 import { MedusaError } from '@medusajs/utils';
 import { ProductRepository } from '../repositories/product';
 import { Like } from 'typeorm';
@@ -22,8 +22,9 @@ class ProductService extends MedusaProductService {
     );
 
     const res = await prodRepo.find({ where: { slug }, relations: { variants: true } });
-  } */
-
+  } 
+  
+    // TODO: remove. No intervantions into original entities/DB schema ath the moment
   async getProductsBySlug(value: string): Promise<Product[]> {
     const products = await this.prodRepo.getProductBySlug(value);
 
@@ -33,6 +34,8 @@ class ProductService extends MedusaProductService {
 
     return products;
   }
+  
+  */
 
   async getProductByKeyword(key: string) {
     const products = await this.prodRepo.find({
@@ -47,7 +50,7 @@ class ProductService extends MedusaProductService {
           handle: Like(`%${key}%`)
         }
       ],
-      relations: { variants: true /* , shipping_profile: true  */ }
+      relations: { variants: true }
     });
 
     if (!products) {
