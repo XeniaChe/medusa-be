@@ -1,11 +1,30 @@
 import { Router } from 'express';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 import OrderService from '../../../services/order';
+import { DiscountService } from '@medusajs/medusa';
 import cors from 'cors';
 import { wrapHandler } from '@medusajs/medusa';
 
 type GetByCustomerId = {
   id: string;
+};
+
+enum DiscountRuleType {
+  FIXED = 'fixed',
+  PERCENTAGE = 'percentage',
+  FREE_SHIPPING = 'free_shipping'
+}
+
+enum AllocationType {
+  TOTAL = 'total',
+  ITEM = 'item'
+}
+
+type CreateDiscount = {
+  code: string;
+  rule: { type: DiscountRuleType; value: number; allocation: AllocationType };
+  is_dynamic: boolean;
+  is_disabled: boolean;
 };
 
 export const OrderRoute = async (router: Router, options: ConfigModule) => {
@@ -28,6 +47,18 @@ export const OrderRoute = async (router: Router, options: ConfigModule) => {
       const { id } = req.query as GetByCustomerId;
 
       const data = await orderService.getOrdersByCustomerId(id);
+      res.json(data);
+    })
+  );
+
+  orderRouter.post(
+    '/addDiscount',
+    wrapHandler(async (req, res) => {
+      const discountService: DiscountService = req.scope.resolve('discountService');
+      const discountDraft = req.body as CreateDiscount;
+
+      const data = await discountService.create(discountDraft);
+
       res.json(data);
     })
   );
