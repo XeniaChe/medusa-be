@@ -20,8 +20,8 @@ class AdressService extends TransactionBaseService {
     return addresses;
   }
 
-  async addToCustomer(id: string, payload: AddressDraft) {
-    const dataDraft = {
+  async addToCustomer(id: string, payload: object) {
+    const dataDraft: AddressDraft = {
       customer_id: id,
       ...payload
     };
@@ -36,7 +36,7 @@ class AdressService extends TransactionBaseService {
     return newAddress;
   }
 
-  async update(customerId: string, addressId: string, payload: AddressDraft) {
+  async update(customerId: string, addressId: string, payload: object) {
     const address = await this.addressRepo.findOne({
       where: {
         id: addressId,
@@ -48,7 +48,7 @@ class AdressService extends TransactionBaseService {
       throw new MedusaError(MedusaError.Types.NOT_FOUND, 'Error. Address does not exist');
     }
 
-    const updateAddressDraft = { ...address, ...payload };
+    const updateAddressDraft: AddressDraft = { ...address, ...payload };
     const updatedAddress = await this.addressRepo.save(updateAddressDraft);
 
     if (!updatedAddress) {
