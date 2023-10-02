@@ -9,15 +9,19 @@ type GetAddressesQueryParams = {
   customerId: string;
 };
 
-type AddNewBody = {
+type AddNewAddressBody = {
   customerId: string;
   address: AddressDraft;
 };
 
-type UpdateBody = {
+type UpdateAddressBody = {
   customerId: string;
   addressId: string;
   address: AddressDraft;
+};
+
+type RemoveAddressBody = {
+  customerId: string;
 };
 
 export const AddressesRoute = async (router: Router, options: ConfigModule) => {
@@ -50,7 +54,7 @@ export const AddressesRoute = async (router: Router, options: ConfigModule) => {
     '/addToCustomer',
     wrapHandler(async (req, res) => {
       const addressService: AdressService = req.scope.resolve('addressService');
-      const { customerId, address } = req.body as AddNewBody;
+      const { customerId, address } = req.body as AddNewAddressBody;
 
       const data = await addressService.addToCustomer(customerId, address);
 
@@ -62,7 +66,7 @@ export const AddressesRoute = async (router: Router, options: ConfigModule) => {
     '/update',
     wrapHandler(async (req, res) => {
       const addressService: AdressService = req.scope.resolve('addressService');
-      const { customerId, address, addressId } = req.body as UpdateBody;
+      const { customerId, address, addressId } = req.body as UpdateAddressBody;
 
       const data = await addressService.update(customerId, addressId, address);
 
@@ -74,7 +78,7 @@ export const AddressesRoute = async (router: Router, options: ConfigModule) => {
     '/:id',
     wrapHandler(async (req, res) => {
       const addressService: AdressService = req.scope.resolve('addressService');
-      const { customerId } = req.body as UpdateBody;
+      const { customerId } = req.body as RemoveAddressBody;
       const { id } = req.params;
 
       const data = await addressService.remove(customerId, id);
