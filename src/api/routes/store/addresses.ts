@@ -69,4 +69,17 @@ export const AddressesRoute = async (router: Router, options: ConfigModule) => {
       res.json(data);
     })
   );
+
+  addressRouter.delete(
+    '/:id',
+    wrapHandler(async (req, res) => {
+      const addressService: AdressService = req.scope.resolve('addressService');
+      const { customerId } = req.body as UpdateBody;
+      const { id } = req.params;
+
+      const data = await addressService.remove(customerId, id);
+
+      res.json(data);
+    })
+  );
 };

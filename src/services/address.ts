@@ -1,23 +1,18 @@
-import { TransactionBaseService, Address, Customer, Country } from '@medusajs/medusa';
-import { AddressRepository } from '../repositories/address';
+import { TransactionBaseService, Address } from '@medusajs/medusa';
 import { MedusaError } from '@medusajs/utils';
 import { AddressDraft } from 'src/types';
 
 class AdressService extends TransactionBaseService {
-  protected addressRepository_: typeof AddressRepository;
+  addressRepo;
 
   constructor(container) {
     super(container);
 
-    this.addressRepository_ = container.addressRepository;
+    this.addressRepo = this.activeManager_.getRepository(Address);
   }
 
-  addressRepo: typeof AddressRepository;
   async list(id: string): Promise<Address[]> {
-    // const addressRepo = this.activeManager_.getRepository(Address);
-    const addressRepo = this.activeManager_.withRepository(this.addressRepository_);
-    console.log({ addressRepo });
-    const addresses = await addressRepo.find({ where: { customer_id: id } });
+    const addresses = await this.addressRepo.find({ where: { customer_id: id } });
 
     if (!addresses) {
       throw new MedusaError(MedusaError.Types.NOT_FOUND, 'Addresses were not found');
@@ -26,16 +21,14 @@ class AdressService extends TransactionBaseService {
   }
 
   async addToCustomer(id: string, payload: AddressDraft) {
-    const addressRepo = this.activeManager_.withRepository(this.addressRepository_);
-    console.log({ addressRepo });
-    // const addressRepo = this.activeManager_.getRepository(Address);
     const dataDraft = {
       customer_id: id,
       ...payload
     };
 
-    const newAddress = await addressRepo.createNew(dataDraft);
-    // const newAddress2 = await addressRepo.create(dataDraft);
+    const newAddressDraft = await this.addressRepo.create(dataDraft);
+    const newAddress = await this.addressRepo.save(newAddressDraft);
+
     if (!newAddress) {
       throw new MedusaError(MedusaError.Types.DB_ERROR, 'Error creating address');
     }
@@ -44,21 +37,37 @@ class AdressService extends TransactionBaseService {
   }
 
   async update(customerId: string, addressId: string, payload: AddressDraft) {
-    const addressRepo = this.activeManager_.withRepository(this.addressRepository_);
+    const address = await this.addressRepo.findOne({
+      where: {
+        id: addressId,
+        customer_id: customerId
+      }
+    });
 
-    const dataDraft = {
-      customer_id: customerId,
+    if (!address) {
+      throw new MedusaError(MedusaError.Types.NOT_FOUND, 'Error. Address does not exist');
+    }
 
-      ...payload
-    };
-
-    const updatedAddress = await addressRepo.update(addressId, dataDraft);
+    const updateAddressDraft = { ...address, ...payload };
+    const updatedAddress = await this.addressRepo.save(updateAddressDraft);
 
     if (!updatedAddress) {
       throw new MedusaError(MedusaError.Types.DB_ERROR, 'Error updating address');
     }
 
     return updatedAddress;
+  }
+
+  async remove(customerId: string, addressId: string) {
+    const address = await this.addressRepo.findOne({
+      where: { id: addressId, customer_id: customerId }
+    });
+
+    if (!address) {
+      throw new MedusaError(MedusaError.Types.NOT_FOUND, 'Error. Address does not exist');
+    }
+
+    return await this.addressRepo.remove([address]);
   }
 }
 
