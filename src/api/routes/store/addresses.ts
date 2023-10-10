@@ -9,14 +9,20 @@ type GetAddressesQueryParams = {
   customerId: string;
 };
 
+type GetByIdADdressParams = {
+  customerId: string;
+  addressId: string;
+};
+
 type AddNewAddressBody = {
   customerId: string;
   address: AddressDraft;
 };
 
 type UpdateAddressBody = {
-  customerId: string;
+  /*   customerId: string;
   addressId: string;
+ */
   address: AddressDraft;
 };
 
@@ -66,9 +72,22 @@ export const AddressesRoute = async (router: Router, options: ConfigModule) => {
     '/update',
     wrapHandler(async (req, res) => {
       const addressService: AdressService = req.scope.resolve('addressService');
-      const { customerId, address, addressId } = req.body as UpdateAddressBody;
+      const { /* customerId,  addressId, */ address } = req.body as UpdateAddressBody;
 
-      const data = await addressService.update(customerId, addressId, address);
+      // All the logic of retreiving address by Id and updationg it's values moved to ecommerce-plugin side
+      const data = await addressService.update(/* customerId, addressId,  */ address);
+
+      res.json(data);
+    })
+  );
+
+  addressRouter.get(
+    '/getById',
+    wrapHandler(async (req, res) => {
+      const addressService: AdressService = req.scope.resolve('addressService');
+      const { customerId, addressId } = req.query as GetByIdADdressParams;
+
+      const data = await addressService.retreiveById(customerId, addressId);
 
       res.json(data);
     })
