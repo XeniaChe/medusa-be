@@ -1,4 +1,4 @@
-import { ProductService as MedusaProductService } from '@medusajs/medusa';
+import { ProductService as MedusaProductService, Product } from '@medusajs/medusa';
 // import { Product } from '../models/product';
 import { MedusaError } from '@medusajs/utils';
 import { ProductRepository } from '../repositories/product';
