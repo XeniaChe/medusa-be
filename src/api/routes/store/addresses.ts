@@ -74,7 +74,7 @@ export const AddressesRoute = async (router: Router, options: ConfigModule) => {
       const addressService: AdressService = req.scope.resolve('addressService');
       const { /* customerId,  addressId, */ address } = req.body as UpdateAddressBody;
 
-      // All the logic of retreiving address by Id and updationg it's values moved to ecommerce-plugin side
+      // All the logic of retreiving address by Id and updationg it's content moved to ecommerce-plugin's side
       const data = await addressService.update(/* customerId, addressId,  */ address);
 
       res.json(data);
