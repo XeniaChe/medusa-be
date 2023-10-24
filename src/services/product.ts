@@ -20,7 +20,8 @@ class ProductService extends MedusaProductService {
     const prodRepo: typeof ProductRepository = this.activeManager_.withRepository(
       this.productRepository_
     );
-    // 'images,variants.prices,variants.options,options.values'
+
+    
     return await prodRepo.find({
       where: { title: slug },
       relations: {
