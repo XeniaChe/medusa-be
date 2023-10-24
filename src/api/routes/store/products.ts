@@ -49,4 +49,18 @@ export const ProductRoute = async (router: Router, options: ConfigModule) => {
       res.json(data);
     })
   );
+
+  prodRouter.get(
+    '/getBySlug',
+    wrapHandler(async (req, res) => {
+      const prodService: ProductService = req.scope.resolve('productService');
+      const { slug } = req.query as GetBySlugQueryParams;
+
+      const data = await prodService.getProductsBySlug(slug);
+      console.log({data});
+
+      res.json(data);
+    })
+  );
+
 };

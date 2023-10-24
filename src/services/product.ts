@@ -16,14 +16,22 @@ class ProductService extends MedusaProductService {
   }
 
   // One more way to find product and append productVariants(relation)
-  /*   async getProductsBySlug(slug: string) {
+  async getProductsBySlug(slug: string) {
     const prodRepo: typeof ProductRepository = this.activeManager_.withRepository(
       this.productRepository_
     );
 
-    const res = await prodRepo.find({ where: { slug }, relations: { variants: true } });
-  } 
-  
+    
+    return await prodRepo.find({
+      where: { title: slug },
+      relations: {
+        variants: { prices: true, options: true },
+        images: true,
+        options: { values: true }
+      }
+    });
+  }
+  /*
     // TODO: remove. No intervantions into original entities/DB schema ath the moment
   async getProductsBySlug(value: string): Promise<Product[]> {
     const products = await this.prodRepo.getProductBySlug(value);
