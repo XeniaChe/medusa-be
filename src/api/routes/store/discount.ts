@@ -49,4 +49,11 @@ export const DiscountRoute = async (router: Router, options: ConfigModule) => {
       res.json(data);
     })
   );
+
+  discountRouter.get('/getAll',  wrapHandler(async (req, res) => {
+    const discountService: DiscountService = req.scope.resolve('discountService');
+    const data = await discountService.list({},{ relations: ['regions'] } )
+
+    res.json(data);
+  }))
 };
