@@ -21,9 +21,8 @@ class ProductService extends MedusaProductService {
       this.productRepository_
     );
 
-    
-    return await prodRepo.find({
-      where: { title: slug },
+    return await prodRepo.findOne({
+      where: { title: slug},
       relations: {
         variants: { prices: true, options: true },
         images: true,
