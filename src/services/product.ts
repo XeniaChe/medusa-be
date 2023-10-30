@@ -21,8 +21,7 @@ class ProductService extends MedusaProductService {
       this.productRepository_
     );
 
-    
-    return await prodRepo.find({
+    return await prodRepo.findOne({
       where: { title: slug },
       relations: {
         variants: { prices: true, options: true },
@@ -45,27 +44,46 @@ class ProductService extends MedusaProductService {
   
   */
 
-  async getProductByKeyword(key: string) {
-    const products = await this.prodRepo.find({
-      where: [
-        {
-          title: Like(`%${key}%`)
-        },
-        {
-          description: Like(`%${key}%`)
-        },
-        {
-          handle: Like(`%${key}%`)
-        }
-      ],
-      relations: { variants: true }
-    });
+  async getProductByKeyword(key: string, limit: number, offcet: number) {
+    const conditions = [
+      {
+        title: Like(`%${key}%`)
+      },
+      {
+        description: Like(`%${key}%`)
+      },
+      {
+        handle: Like(`%${key}%`)
+      }
+    ];
+
+    const relations = {
+      variants: { options: true, prices: true },
+      images: true,
+      options: { values: true }
+    };
+    const products =
+      limit && offcet
+        ? await this.prodRepo.find({
+            skip: offcet,
+            take: limit,
+            where: conditions,
+            relations,
+            cache: true
+          })
+        : await this.prodRepo.find({
+            where: conditions,
+            relations,
+            cache: true
+          });
+
+    const count = await this.prodRepo.productByKeywordCount(key);
 
     if (!products) {
       throw new MedusaError(MedusaError.Types.NOT_FOUND, 'Product was not found');
     }
 
-    return products;
+    return { products, count };
   }
 }
 

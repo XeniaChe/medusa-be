@@ -10,6 +10,8 @@ type GetBySlugQueryParams = {
 
 type GetByKeywordQueryParams = {
   key: string;
+  limit: string;
+  offcet: string;
 };
 
 export const ProductRoute = async (router: Router, options: ConfigModule) => {
@@ -42,9 +44,9 @@ export const ProductRoute = async (router: Router, options: ConfigModule) => {
     '/getByKeyword',
     wrapHandler(async (req, res) => {
       const prodService: ProductService = req.scope.resolve('productService');
-      const { key } = req.query as GetByKeywordQueryParams;
+      const { key, limit, offcet } = req.query as GetByKeywordQueryParams;
 
-      const data = await prodService.getProductByKeyword(key);
+      const data = await prodService.getProductByKeyword(key, +limit, +offcet);
 
       res.json(data);
     })
@@ -57,10 +59,8 @@ export const ProductRoute = async (router: Router, options: ConfigModule) => {
       const { slug } = req.query as GetBySlugQueryParams;
 
       const data = await prodService.getProductsBySlug(slug);
-      console.log({data});
 
       res.json(data);
     })
   );
-
 };
