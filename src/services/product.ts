@@ -62,21 +62,12 @@ class ProductService extends MedusaProductService {
       images: true,
       options: { values: true }
     };
-    const products =
+    const base =
       limit && offcet
-        ? await this.prodRepo.find({
-            skip: offcet,
-            take: limit,
-            where: conditions,
-            relations,
-            cache: true
-          })
-        : await this.prodRepo.find({
-            where: conditions,
-            relations,
-            cache: true
-          });
+        ? { skip: offcet, take: limit, where: conditions, relations, cache: true }
+        : { where: conditions, relations, cache: true };
 
+    const products = await this.prodRepo.find(base);
     const count = await this.prodRepo.productByKeywordCount(key);
 
     if (!products) {
