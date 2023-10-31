@@ -8,7 +8,9 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: ['dist/models/*.js'],
-  migrations: ['dist/migrations/*.js']
+  migrations: ['dist/migrations/*.js'],
+  cache: true,
+  synchronize: true
 });
 
 module.exports = {
